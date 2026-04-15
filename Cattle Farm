@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haji Cattle Farm — Fresh Milk & Qurbani</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { inter: ['Inter', 'sans-serif'] },
+    }
+  }
+}
+</script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #050505; color: #fff; overflow-x: hidden; }
+  
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); }
+  .glass-strong { background: rgba(255,255,255,0.06); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.1); }
+
+  .gradient-text {
+    background: linear-gradient(to right, #fff, #888);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+  @keyframes pulse-glow { 0%,100%{opacity:0.4} 50%{opacity:0.8} }
+  @keyframes slide-up { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+  .animate-float { animation: float 6s ease-in-out infinite; }
+  .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+  .animate-marquee { animation: marquee 25s linear infinite; }
+  .animate-slide-up { animation: slide-up 0.8s ease-out forwards; }
+
+  .reveal { opacity: 0; transform: translateY(30px); transition: all 1s cubic-bezier(0.25,0.46,0.45,0.94); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  .animal-card { transition: all 0.5s cubic-bezier(0.25,0.46,0.45,0.94); }
+  .animal-card:hover { transform: translateY(-8px); background: rgba(255,255,255,0.06); }
+  .animal-card:hover .card-img { transform: scale(1.08); }
+  .card-img { transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94); }
+
+  .btn-primary {
+    background: #fff; color: #000; font-weight: 500; padding: 12px 28px; border-radius: 999px;
+    border: none; cursor: pointer; font-size: 14px; transition: all 0.3s;
+    box-shadow: 0 0 20px rgba(255,255,255,0.1); text-decoration: none; display: inline-flex; align-items: center;
+  }
+  .btn-primary:hover { box-shadow: 0 0 40px rgba(255,255,255,0.25); transform: translateY(-2px); }
+
+  .btn-emerald {
+    background: #10b981; color: #000; font-weight: 600; padding: 12px 28px; border-radius: 999px;
+    border: none; cursor: pointer; font-size: 14px; transition: all 0.3s;
+    box-shadow: 0 0 20px rgba(16,185,129,0.3);
+  }
+  .btn-emerald:hover { box-shadow: 0 0 40px rgba(16,185,129,0.5); transform: translateY(-2px); }
+
+  .input-dark {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: #fff; padding: 12px 16px; border-radius: 12px; font-size: 14px;
+    font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s; width: 100%;
+  }
+  .input-dark:focus { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16,185,129,0.15); }
+  .input-dark::placeholder { color: #525252; }
+  select.input-dark { appearance: none; cursor: pointer; }
+
+  .nav-link { color: #a3a3a3; transition: color 0.3s; text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: 0.02em; }
+  .nav-link:hover { color: #fff; }
+
+  .spotlight-1 { position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(16,185,129,0.12), transparent 70%); border-radius: 50%; filter: blur(60px); pointer-events: none; }
+  .spotlight-2 { position: absolute; width: 500px; height: 500px; background: radial-gradient(circle, rgba(168,85,247,0.08), transparent 70%); border-radius: 50%; filter: blur(80px); pointer-events: none; }
+
+  .grid-bg {
+    background-size: 40px 40px;
+    background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+  }
+
+  .marquee-track { display: flex; gap: 48px; width: max-content; }
+
+  .toast {
+    position: fixed; bottom: 100px; right: 20px; z-index: 10000;
+    padding: 16px 24px; border-radius: 16px;
+    background: rgba(16,185,129,0.15); backdrop-filter: blur(16px);
+    border: 1px solid rgba(16,185,129,0.3); color: #10b981;
+    font-size: 14px; font-weight: 500;
+    transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  .toast.show { transform: translateX(0); }
+
+  .mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .mobile-menu.open { max-height: 300px; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #050505; }
+  ::-webkit-scrollbar-thumb { background: #262626; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #404040; }
+
+  .hero-img-overlay {
+    mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  }
+</style>
+</head>
+
+<body class="font-inter">
+
+<!-- NAVIGATION -->
+<nav class="fixed top-0 left-0 right-0 z-50 pt-4 px-4 md:pt-6 md:px-6">
+  <div class="max-w-5xl mx-auto glass-strong rounded-full px-6 py-3 flex items-center justify-between">
+    <a href="#home" class="flex items-center gap-2 text-white no-underline">
+      <iconify-icon icon="mdi:cow" width="22" style="color:#10b981"></iconify-icon>
+      <span class="text-sm font-semibold tracking-tight">Haji Cattle Farm</span>
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#home" class="nav-link">Home</a>
+      <a href="#milk" class="nav-link">Milk</a>
+      <a href="#qurbani" class="nav-link">Qurbani</a>
+      <a href="#gallery" class="nav-link">Gallery</a>
+    </div>
+    <div class="hidden md:block">
+      <a href="https://wa.me/923001234567" target="_blank" class="btn-emerald inline-flex items-center gap-2 text-xs" style="padding:8px 20px;">
+        <iconify-icon icon="mdi:whatsapp" width="16"></iconify-icon>
+        Contact Us
+      </a>
+    </div>
+    <button onclick="toggleMobile()" class="md:hidden text-white" id="hamburger">
+      <iconify-icon icon="mdi:menu" width="24"></iconify-icon>
+    </button>
+  </div>
+  <div class="mobile-menu md:hidden mt-2" id="mobileMenu">
+    <div class="glass-strong rounded-2xl px-6 py-4 flex flex-col gap-4">
+      <a href="#home" class="nav-link" onclick="toggleMobile()">Home</a>
+      <a href="#milk" class="nav-link" onclick="toggleMobile()">Milk</a>
+      <a href="#qurbani" class="nav-link" onclick="toggleMobile()">Qurbani</a>
+      <a href="#gallery" class="nav-link" onclick="toggleMobile()">Gallery</a>
+      <a href="https://wa.me/923001234567" target="_blank" class="btn-emerald inline-flex items-center justify-center gap-2 text-xs" style="padding:10px 20px;">
+        <iconify-icon icon="mdi:whatsapp" width="16"></iconify-icon> Contact Us
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="home" class="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden">
+  <div class="absolute inset-0 z-0">
+    <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30" alt="Farm" class="w-full h-full object-cover opacity-20 hero-img-overlay">
+    <div class="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505]"></div>
+  </div>
+  <div class="spotlight-1" style="top:-200px; left:-200px;"></div>
+  <div class="spotlight-2" style="bottom:-150px; right:-150px;"></div>
+
+  <div class="relative z-10 text-center max-w-4xl mx-auto">
+    <div class="animate-slide-up inline-flex items-center gap-2 glass rounded-full px-5 py-2 mb-8" style="animation-delay:0.1s;">
+      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse-glow"></span>
+      <span class="text-xs font-medium text-neutral-400 tracking-wider uppercase">Trusted Since 1995</span>
+    </div>
+    <h1 class="animate-slide-up gradient-text text-5xl md:text-7xl lg:text-8xl font-medium leading-none tracking-tighter mb-6" style="animation-delay:0.2s;">
+      Haji Cattle<br>Farm
+    </h1>
+    <p class="animate-slide-up text-neutral-400 text-base md:text-lg max-w-xl mx-auto mb-10 leading-relaxed" style="animation-delay:0.35s;">
+      Fresh milk delivered to your doorstep across Karachi. Qurbani animals raised with care and tradition.
+    </p>
+    <div class="animate-slide-up flex flex-col sm:flex-row items-center justify-center gap-4" style="animation-delay:0.5s;">
+      <a href="#milk" class="btn-primary gap-2">
+        <iconify-icon icon="mdi:cup" width="16"></iconify-icon>
+        Order Fresh Milk
+      </a>
+      <a href="#qurbani" class="glass inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-medium text-neutral-300 hover:text-white transition-colors no-underline">
+        <iconify-icon icon="mdi:goat" width="16"></iconify-icon>
+        Browse Qurbani
+      </a>
+    </div>
+    <div class="animate-slide-up grid grid-cols-3 gap-6 mt-16 max-w-lg mx-auto" style="animation-delay:0.65s;">
+      <div>
+        <div class="text-2xl md:text-3xl font-semibold text-white">500+</div>
+        <div class="text-xs text-neutral-500 mt-1">Cattle Head</div>
+      </div>
+      <div>
+        <div class="text-2xl md:text-3xl font-semibold text-white">30+</div>
+        <div class="text-xs text-neutral-500 mt-1">Years Legacy</div>
+      </div>
+      <div>
+        <div class="text-2xl md:text-3xl font-semibold text-white">10K+</div>
+        <div class="text-xs text-neutral-500 mt-1">Happy Clients</div>
+      </div>
+    </div>
+  </div>
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-neutral-600">
+    <span class="text-[10px] uppercase tracking-[0.2em]">Scroll</span>
+    <div class="w-px h-8 bg-gradient-to-b from-neutral-600 to-transparent"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="relative overflow-hidden py-6 border-t border-b border-white/5">
+  <div class="marquee-track animate-marquee">
+    <span class="text-sm font-medium text-neutral-600 flex items-center gap-3 whitespace-nowrap"><iconify-icon icon="mdi:circle-small" width="16" style="color:#10b981"></iconify-icon> Fresh Cow Milk</span>
+    <span class="text-sm font-medium text-neutral-600 flex items-center gap-3 whitespace-nowrap"><iconify-icon icon="mdi:circle-small" width="16" style="color:#10b981"></iconify-icon> Buffalo Milk</span>
+    <span class="text-sm font-medium text-neutral-600 flex items-center gap-3 whitespace-nowrap"><iconify-icon icon="mdi:circle-small" width="16" style="color:#10b981"></iconify-icon> Qurbani Cows</span>
+    <span class="text-sm font-medium text-neutral-600 flex items-center gap-3 whitespace-nowrap"><iconify-icon icon="mdi:circle-small" width="16" style="color:#10b981"></iconify-icon> Qurbani Goats</span>
+    <span class="text-sm font-medium text-neutral-600 flex items-center gap-3 whitespace-nowrap"><iconify-icon icon="mdi:circle-small" width="16" style="color:#10b981"></iconify-icon> Home Delivery</span>
+    <span class="text-sm font-medium text-neutral-600 flex items-center gap-3 whitespace-nowrap"><iconify-icon icon="mdi:circle-small" width="16" style="color:#10b981"></iconify-icon> Eid ul Adha 2026</span>
+    <span class="text-sm font-medium text-neutral-600 flex items-center gap-3 whitespace-nowrap"><iconify-icon icon="mdi:circle-small" width="16" style="color:#10b981"></iconify-icon> Fresh Cow Milk</span>
+    <span class="text-sm font-medium text-neutral-600 flex items-center gap-3 whitespace-nowrap"><iconify-icon icon="mdi:circle-small" width="16" style="color:#10b981"></iconify-icon> Buffalo Milk</span>
+    <span class="text-sm font-medium text-neutral-600 flex items-center gap-3 whitespace-nowrap"><iconify-icon icon="mdi:circle-small" width="16" style="color:#10b981"></iconify-icon> Qurbani Cows</span>
+    <span class="text-sm font-medium text-neutral-600 flex items-center gap-3 whitespace-nowrap"><iconify-icon icon="mdi:circle-small" width="16" style="color:#10b981"></iconify-icon> Qurbani Goats</span>
+    <span class="text-sm font-medium text-neutral-600 flex items-center gap-3 whitespace-nowrap"><iconify-icon icon="mdi:circle-small" width="16" style="color:#10b981"></iconify-icon> Home Delivery</span>
+    <span class="text-sm font-medium text-neutral-600 flex items-center gap-3 whitespace-nowrap"><iconify-icon icon="mdi:circle-small" width="16" style="color:#10b981"></iconify-icon> Eid ul Adha 2026</span>
+  </div>
+</div>
+
+<!-- MILK SECTION -->
+<section id="milk" class="relative py-24 md:py-32 px-4 overflow-hidden">
+  <div class="spotlight-1" style="top:50%; right:-300px; transform:translateY(-50%);"></div>
+  <div class="max-w-5xl mx-auto relative z-10">
+    <div class="text-center mb-16 reveal">
+      <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 mb-6">
+        <iconify-icon icon="mdi:cup-water" width="14" style="color:#10b981"></iconify-icon>
+        <span class="text-[11px] font-medium text-emerald-400 tracking-wider uppercase">Daily Delivery</span>
+      </div>
+      <h2 class="text-3xl md:text-5xl font-medium tracking-tight gradient-text mb-4">Fresh Milk Delivery</h2>
+      <p class="text-neutral-400 text-sm md:text-base max-w-lg mx-auto leading-relaxed">
+        Pure, unadulterated milk from our own farm — delivered fresh to your door every morning and evening.
+      </p>
+    </div>
+    <div class="flex flex-wrap justify-center gap-3 mb-12 reveal">
+      <div class="glass rounded-full px-4 py-2 flex items-center gap-2">
+        <iconify-icon icon="mdi:truck-delivery" width="16" style="color:#10b981"></iconify-icon>
+        <span class="text-xs text-neutral-300">All Over Karachi</span>
+      </div>
+      <div class="glass rounded-full px-4 py-2 flex items-center gap-2">
+        <iconify-icon icon="mdi:map-marker" width="16" style="color:#10b981"></iconify-icon>
+        <span class="text-xs text-neutral-300">DHA • Clifton • Gulshan • Johar</span>
+      </div>
+      <div class="glass rounded-full px-4 py-2 flex items-center gap-2">
+        <iconify-icon icon="mdi:clock-outline" width="16" style="color:#10b981"></iconify-icon>
+        <span class="text-xs text-neutral-300">6–9 AM & 5–8 PM</span>
+      </div>
+    </div>
+    <div class="text-center mb-12 reveal">
+      <div class="inline-flex items-baseline gap-1">
+        <span class="text-xs text-neutral-500">Rs.</span>
+        <span class="text-4xl md:text-5xl font-semibold text-white">220</span>
+        <span class="text-sm text-neutral-500">/ Liter</span>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+      <div class="glass rounded-2xl p-6 reveal animal-card">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+            <iconify-icon icon="mdi:cow" width="24" style="color:#10b981"></iconify-icon>
+          </div>
+          <div>
+            <h3 class="text-base font-medium text-white">Cow Milk</h3>
+            <p class="text-xs text-neutral-500">Light & nutritious</p>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <input type="number" id="cow" placeholder="Enter liters" class="input-dark" min="1">
+          <div class="relative">
+            <select id="cowp" class="input-dark pr-10">
+              <option>One Time</option>
+              <option>Weekly</option>
+              <option>Monthly</option>
+            </select>
+            <iconify-icon icon="mdi:chevron-down" width="16" class="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none"></iconify-icon>
+          </div>
+          <button class="btn-emerald w-full flex items-center justify-center gap-2 text-sm" onclick="milk('Cow Milk','cow','cowp')">
+            <iconify-icon icon="mdi:whatsapp" width="18"></iconify-icon> Order on WhatsApp
+          </button>
+        </div>
+      </div>
+      <div class="glass rounded-2xl p-6 reveal animal-card" style="transition-delay:0.1s;">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
+            <iconify-icon icon="mdi:buffalo" width="24" style="color:#a855f7"></iconify-icon>
+          </div>
+          <div>
+            <h3 class="text-base font-medium text-white">Buffalo Milk</h3>
+            <p class="text-xs text-neutral-500">Rich & creamy</p>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <input type="number" id="buf" placeholder="Enter liters" class="input-dark" min="1">
+          <div class="relative">
+            <select id="bufp" class="input-dark pr-10">
+              <option>One Time</option>
+              <option>Weekly</option>
+              <option>Monthly</option>
+            </select>
+            <iconify-icon icon="mdi:chevron-down" width="16" class="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none"></iconify-icon>
+          </div>
+          <button class="btn-emerald w-full flex items-center justify-center gap-2 text-sm" onclick="milk('Buffalo Milk','buf','bufp')">
+            <iconify-icon icon="mdi:whatsapp" width="18"></iconify-icon> Order on WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EID BANNER -->
+<div class="relative overflow-hidden border-t border-b border-white/5">
+  <div class="absolute inset-0 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-amber-500/10"></div>
+  <div class="relative py-5 px-4 flex items-center justify-center gap-3">
+    <iconify-icon icon="mdi:star-four-points" width="18" style="color:#f59e0b; animation: pulse-glow 2s ease-in-out infinite;"></iconify-icon>
+    <span class="text-sm md:text-base font-medium text-amber-200/80 tracking-wide">
+      Eid ul Adha 2026 — Book Your Qurbani Animal Early & Save!
+    </span>
+    <iconify-icon icon="mdi:star-four-points" width="18" style="color:#f59e0b; animation: pulse-glow 2s ease-in-out infinite; animation-delay:1s;"></iconify-icon>
+  </div>
+</div>
+
+<!-- QURBANI SECTION -->
+<section id="qurbani" class="relative py-24 md:py-32 px-4 overflow-hidden grid-bg">
+  <div class="spotlight-2" style="top:-200px; left:-200px;"></div>
+  <div class="max-w-5xl mx-auto relative z-10">
+    <div class="text-center mb-12 reveal">
+      <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 mb-6">
+        <iconify-icon icon="mdi:goat" width="14" style="color:#f59e0b"></iconify-icon>
+        <span class="text-[11px] font-medium text-amber-400 tracking-wider uppercase">Eid ul Adha 2026</span>
+      </div>
+      <h2 class="text-3xl md:text-5xl font-medium tracking-tight gradient-text mb-4">Qurbani Animals</h2>
+      <p class="text-neutral-400 text-sm md:text-base max-w-lg mx-auto leading-relaxed">
+        Hand-picked, healthy animals available across Karachi & Lahore.
+      </p>
+    </div>
+    <div class="flex justify-center mb-10 reveal">
+      <div class="glass rounded-full p-1 flex gap-1">
+        <button onclick="filterCity('All')" id="filter-all" class="city-btn px-5 py-2 rounded-full text-xs font-medium transition-all bg-white/10 text-white">All Cities</button>
+        <button onclick="filterCity('Karachi')" id="filter-Karachi" class="city-btn px-5 py-2 rounded-full text-xs font-medium transition-all text-neutral-500 hover:text-neutral-300">Karachi</button>
+        <button onclick="filterCity('Lahore')" id="filter-Lahore" class="city-btn px-5 py-2 rounded-full text-xs font-medium transition-all text-neutral-500 hover:text-neutral-300">Lahore</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="qurbaniGrid">
+
+      <!-- COW -->
+      <div class="animal-card glass rounded-2xl overflow-hidden reveal" data-city="Karachi">
+        <div class="relative overflow-hidden h-52">
+          <img src="https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=600&h=400&fit=crop" alt="Cow" class="card-img w-full h-full object-cover">
+          <div class="absolute top-3 left-3 glass rounded-full px-3 py-1 text-[10px] font-medium text-emerald-400">
+            <iconify-icon icon="mdi:map-marker" width="12"></iconify-icon> Karachi
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-medium text-white flex items-center gap-2">
+              <iconify-icon icon="mdi:cow" width="18" style="color:#10b981"></iconify-icon> Cow
+            </h3>
+            <span class="text-lg font-semibold text-white">Rs. 180,000</span>
+          </div>
+          <p class="text-xs text-neutral-500 mb-4">Healthy, well-built — perfect for family Qurbani</p>
+          <button class="btn-emerald w-full flex items-center justify-center gap-2 text-sm" onclick="book('Cow',180000)">
+            <iconify-icon icon="mdi:whatsapp" width="16"></iconify-icon> Book with 20% Advance
+          </button>
+        </div>
+      </div>
+
+      <!-- GOAT -->
+      <div class="animal-card glass rounded-2xl overflow-hidden reveal" data-city="Karachi" style="transition-delay:0.1s;">
+        <div class="relative overflow-hidden h-52">
+          <img src="https://images.unsplash.com/photo-1612454407731-8f39b4e43a8d?w=600&h=400&fit=crop" alt="Goat" class="card-img w-full h-full object-cover">
+          <div class="absolute top-3 left-3 glass rounded-full px-3 py-1 text-[10px] font-medium text-emerald-400">
+            <iconify-icon icon="mdi:map-marker" width="12"></iconify-icon> Karachi
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-medium text-white flex items-center gap-2">
+              <iconify-icon icon="mdi:goat" width="18" style="color:#10b981"></iconify-icon> Goat
+            </h3>
+            <span class="text-lg font-semibold text-white">Rs. 45,000</span>
+          </div>
+          <p class="text-xs text-neutral-500 mb-4">A-grade quality goat</p>
+          <button class="btn-emerald w-full flex items-center justify-center gap-2 text-sm" onclick="book('Goat',45000)">
+            <iconify-icon icon="mdi:whatsapp" width="16"></iconify-icon> Book with 20% Advance
+          </button>
+        </div>
+      </div>
+
+      <!-- SHEEP -->
+      <div class="animal-card glass rounded-2xl overflow-hidden reveal" data-city="Lahore" style="transition-delay:0.2s;">
+        <div class="relative overflow-hidden h-52">
+          <img src="https://images.unsplash.com/photo-1484557985045-edf25e08da73?w=600&h=400&fit=crop" alt="Sheep" class="card-img w-full h-full object-cover">
+          <div class="absolute top-3 left-3 glass rounded-full px-3 py-1 text-[10px] font-medium text-indigo-400">
+            <iconify-icon icon="mdi:map-marker" width="12"></iconify-icon> Lahore
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-medium text-white flex items-center gap-2">
+              <iconify-icon icon="mdi:sheep" width="18" style="color:#6366f1"></iconify-icon> Sheep
+            </h3>
+            <span class="text-lg font-semibold text-white">Rs. 35,000</span>
+          </div>
+          <p class="text-xs text-neutral-500 mb-4">Soft-wool sheep, excellent health</p>
+          <button class="btn-emerald w-full flex items-center justify-center gap-2 text-sm" onclick="book('Sheep',35000)">
+            <iconify-icon icon="mdi:whatsapp" width="16"></iconify-icon> Book with 20% Advance
+          </button>
+        </div>
+      </div>
+
+      <!-- COMING SOON -->
+      <div class="animal-card glass rounded-2xl overflow-hidden reveal flex items-center justify-center min-h-[380px] sm:col-span-2 lg:col-span-3" data-city="All" style="transition-delay:0.3s; border-style:dashed; border-color: rgba(255,255,255,0.08); max-height:120px;">
+        <div class="text-center p-6 flex items-center gap-4">
+          <iconify-icon icon="mdi:plus-circle-outline" width="22" style="color:#404040"></iconify-icon>
+          <span class="text-sm text-neutral-600">More animals coming soon — <a href="https://wa.me/923001234567?text=I%20want%20to%20know%20about%20more%20animals" target="_blank" class="text-emerald-600 hover:text-emerald-400 transition-colors no-underline">Ask on WhatsApp</a></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery" class="relative py-24 md:py-32 px-4 overflow-hidden">
+  <div class="spotlight-1" style="bottom:-200px; left:50%; transform:translateX(-50%);"></div>
+  <div class="max-w-4xl mx-auto relative z-10">
+    <div class="text-center mb-16 reveal">
+      <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 mb-6">
+        <iconify-icon icon="mdi:image-multiple" width="14" style="color:#10b981"></iconify-icon>
+        <span class="text-[11px] font-medium text-emerald-400 tracking-wider uppercase">Real Photos</span>
+      </div>
+      <h2 class="text-3xl md:text-5xl font-medium tracking-tight gradient-text mb-4">Farm Gallery</h2>
+      <p class="text-neutral-400 text-sm md:text-base max-w-lg mx-auto">
+        Real photos from our farm — what you see is what you get.
+      </p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+
+      <div class="glass rounded-2xl overflow-hidden reveal group cursor-pointer">
+        <div class="relative overflow-hidden aspect-[4/3]">
+          <img src="https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=500&h=375&fit=crop" alt="Cow" class="card-img w-full h-full object-cover">
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-end p-4">
+            <span class="text-xs font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity">🐄 Cow</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl overflow-hidden reveal group cursor-pointer" style="transition-delay:0.05s;">
+        <div class="relative overflow-hidden aspect-[4/3]">
+          <img src="https://images.unsplash.com/photo-1596733430284-f7437764b1a9?w=500&h=375&fit=crop" alt="Buffalo" class="card-img w-full h-full object-cover">
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-end p-4">
+            <span class="text-xs font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity">🐃 Buffalo</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl overflow-hidden reveal group cursor-pointer" style="transition-delay:0.1s;">
+        <div class="relative overflow-hidden aspect-[4/3]">
+          <img src="https://images.unsplash.com/photo-1612454407731-8f39b4e43a8d?w=500&h=375&fit=crop" alt="Goat" class="card-img w-full h-full object-cover">
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-end p-4">
+            <span class="text-xs font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity">🐐 Goat</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl overflow-hidden reveal group cursor-pointer col-span-2 md:col-span-1">
+        <div class="relative overflow-hidden aspect-[4/3]">
+          <img src="https://images.unsplash.com/photo-1484557985045-edf25e08da73?w=500&h=375&fit=crop" alt="Sheep" class="card-img w-full h-full object-cover">
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-end p-4">
+            <span class="text-xs font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity">🐑 Sheep</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/5 py-16 px-4">
+  <div class="max-w-5xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <iconify-icon icon="mdi:cow" width="22" style="color:#10b981"></iconify-icon>
+          <span class="text-sm font-semibold text-white">Haji Cattle Farm</span>
+        </div>
+        <p class="text-xs text-neutral-500 leading-relaxed">
+          Fresh milk delivery and Qurbani animals across Pakistan since 1995.
+        </p>
+      </div>
+      <div>
+        <h4 class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-4">Quick Links</h4>
+        <div class="flex flex-col gap-2">
+          <a href="#home" class="nav-link text-xs">Home</a>
+          <a href="#milk" class="nav-link text-xs">Milk Delivery</a>
+          <a href="#qurbani" class="nav-link text-xs">Qurbani Animals</a>
+          <a href="#gallery" class="nav-link text-xs">Gallery</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-4">Contact</h4>
+        <div class="flex flex-col gap-3">
+          <a href="https://wa.me/923001234567" target="_blank" class="flex items-center gap-2 text-xs text-neutral-400 hover:text-emerald-400 transition-colors no-underline">
+            <iconify-icon icon="mdi:whatsapp" width="16" style="color:#25D366"></iconify-icon> +92 300 1234567
+          </a>
+          <div class="flex items-center gap-2 text-xs text-neutral-400">
+            <iconify-icon icon="mdi:map-marker" width="16" style="color:#10b981"></iconify-icon> Karachi • Lahore
+          </div>
+          <div class="flex items-center gap-2 text-xs text-neutral-400">
+            <iconify-icon icon="mdi:clock" width="16" style="color:#10b981"></iconify-icon> Delivery: 6–9 AM & 5–8 PM
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <p class="text-[11px] text-neutral-600">© 2025 Haji Cattle Farm. All rights reserved.</p>
+      <div class="flex items-center gap-1 text-[11px] text-neutral-600">
+        Made with <iconify-icon icon="mdi:heart" width="12" style="color:#10b981"></iconify-icon> in Pakistan
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- FLOATING WHATSAPP -->
+<a href="https://wa.me/923001234567" target="_blank" class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 no-underline" style="background:#25D366; box-shadow: 0 0 30px rgba(37,211,102,0.4);">
+  <iconify-icon icon="mdi:whatsapp" width="28" style="color:#fff"></iconify-icon>
+</a>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="flex items-center gap-2">
+    <iconify-icon icon="mdi:check-circle" width="18"></iconify-icon>
+    <span id="toastMsg">Redirecting to WhatsApp...</span>
+  </div>
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+function toggleMobile() {
+  const menu = document.getElementById('mobileMenu');
+  const btn = document.getElementById('hamburger');
+  menu.classList.toggle('open');
+  const isOpen = menu.classList.contains('open');
+  btn.innerHTML = isOpen
+    ? '<iconify-icon icon="mdi:close" width="24"></iconify-icon>'
+    : '<iconify-icon icon="mdi:menu" width="24"></iconify-icon>';
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function milk(type, id, plan) {
+  const l = document.getElementById(id).value;
+  const p = document.getElementById(plan).value;
+  if (!l || l <= 0) { showToast('Please enter number of liters'); return; }
+  const total = l * 220;
+  const msg = `Milk Order: ${l}L ${type} (${p})\nTotal: Rs. ${total}\n\n📍 Delivery Address: `;
+  showToast('Opening WhatsApp...');
+  setTimeout(() => { window.open("https://wa.me/923001234567?text=" + encodeURIComponent(msg), "_blank"); }, 500);
+}
+
+function book(animal, price) {
+  const adv = Math.round(price * 0.2);
+  const msg = `Qurbani Booking: ${animal}\n💰 Price: Rs. ${price.toLocaleString()}\n🧾 Advance (20%): Rs. ${adv.toLocaleString()}\n\n📍 City: \n📞 Your Name: `;
+  showToast('Opening WhatsApp...');
+  setTimeout(() => { window.open("https://wa.me/923001234567?text=" + encodeURIComponent(msg), "_blank"); }, 500);
+}
+
+function filterCity(city) {
+  document.querySelectorAll('.city-btn').forEach(btn => {
+    btn.classList.remove('bg-white/10', 'text-white');
+    btn.classList.add('text-neutral-500');
+  });
+  const activeBtn = document.getElementById('filter-' + city);
+  activeBtn.classList.add('bg-white/10', 'text-white');
+  activeBtn.classList.remove('text-neutral-500');
+  document.querySelectorAll('#qurbaniGrid .animal-card').forEach(card => {
+    const cardCity = card.dataset.city;
+    if (city === 'All' || cardCity === city || cardCity === 'All') {
+      card.style.display = '';
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        card.style.transition = 'all 0.5s ease';
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }, 50);
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+const nav = document.querySelector('nav > div');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 100) {
+    nav.style.background = 'rgba(5,5,5,0.8)';
+    nav.style.backdropFilter = 'blur(24px)';
+  } else {
+    nav.style.background = 'rgba(255,255,255,0.06)';
+    nav.style.backdropFilter = 'blur(16px)';
+  }
+});
+</script>
+
+</body>
+</html>
